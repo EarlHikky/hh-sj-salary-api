@@ -9,18 +9,18 @@ PER_PAGE = 100
 HH_API_URL = 'https://api.hh.ru/vacancies/'
 
 
-def get_hh_vacancies(language):
+def get_hh_vacancies(language, *args):
     """Get all vacancies for a language from the HeadHunter"""
     params = {'professional_role': PROFESSIONAL_ROLE, 'area': AREA, 'text': language, 'period': PERIOD,
               'per_page': PER_PAGE}
-    vacancies_list = []
+    vacancies_roster = []
     for page in count(0):
         params['page'] = page
-        vacancies, check, vacancies_found = get_response(HH_API_URL, {}, params)
-        vacancies_list.extend(vacancies)
-        if page >= check - 1:
+        vacancies, available_vacancies_check, vacancies_found = get_response(HH_API_URL, {}, params)
+        vacancies_roster.extend(vacancies)
+        if page >= available_vacancies_check - 1:
             break
-    return vacancies_list, vacancies_found
+    return vacancies_roster, vacancies_found
 
 
 if __name__ == '__main__':

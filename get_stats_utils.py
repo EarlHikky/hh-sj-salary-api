@@ -16,7 +16,7 @@ def predict_rub_salary(vacancy):
     return predicted_salary, 1
 
 
-def check(vacancy):
+def currency_check(vacancy):
     """Checking a type of currency"""
     if not vacancy.get('salary'):
         return vacancy.get('currency') == 'rub'
@@ -26,16 +26,16 @@ def check(vacancy):
 
 def get_average_salary(vacancies):
     """Get average salary for a language in RUB"""
-    average_salary = []
+    average_salaries = []
     vacancies_processed = 0
     for vacancy in vacancies:
-        if not check(vacancy):
+        if not currency_check(vacancy):
             continue
         salary, counter = predict_rub_salary(vacancy)
-        average_salary.append(salary)
+        average_salaries.append(salary)
         vacancies_processed += counter
     try:
-        return int(sum(average_salary) / len(average_salary)), vacancies_processed
+        return int(sum(average_salaries) / len(average_salaries)), vacancies_processed
     except ZeroDivisionError:
         return 0, 0
 
@@ -47,5 +47,5 @@ def get_response(url, headers, params):
     raw_vacancies = response.json()
     vacancies = raw_vacancies.get('items') or raw_vacancies.get('objects')
     vacancies_found = raw_vacancies.get('total') or raw_vacancies.get('found') or 0
-    check = raw_vacancies.get('pages') or raw_vacancies.get('more')
-    return vacancies, check, vacancies_found
+    available_vacancies_check = raw_vacancies.get('pages') or raw_vacancies.get('more')
+    return vacancies, available_vacancies_check, vacancies_found
