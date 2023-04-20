@@ -33,11 +33,11 @@ def main():
     for index, stats in enumerate((hh_vacancies_stats, sj_vacancies_stats)):
         table_title = ('+HeadHunter Moscow+', '+SuperJob Moscow+')[index]
         table_values = [['Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата'],
-                      *[[k, *v.values()] for k, v in stats.items()]]
+                        *[[k, *v.values()] for k, v in stats.items()]]
         table_instance = DoubleTable(table_values, table_title)
         print(table_instance.table)
         print()
-    # print(sj_vacancies_stats)
+
 
 if __name__ == '__main__':
     main()
