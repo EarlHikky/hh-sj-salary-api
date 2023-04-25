@@ -9,9 +9,8 @@ PER_PAGE = 100
 HH_API_URL = 'https://api.hh.ru/vacancies/'
 
 
-def get_hh_vacancies(*args):
+def get_hh_vacancies(language, secret_key=''):
     """Get all vacancies for a language from the HeadHunter"""
-    language = args[0]
     params = {'professional_role': PROFESSIONAL_ROLE, 'area': AREA, 'text': language, 'period': PERIOD,
               'per_page': PER_PAGE}
     vacancies_roster = []
