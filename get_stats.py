@@ -1,6 +1,4 @@
-import os
 from collections import defaultdict
-from dotenv import load_dotenv
 from terminaltables import DoubleTable
 
 from get_stats_utils import get_average_salary
@@ -13,11 +11,11 @@ LANGUAGES = [
 ]
 
 
-def get_vacancies_stats(get_vacancies, secret_key):
+def get_vacancies_stats(get_vacancies):
     """Get a stats for LANGUAGES"""
     vacancies_stats = defaultdict(dict)
     for language in LANGUAGES:
-        vacancies, vacancies_found = get_vacancies(language, secret_key)
+        vacancies, vacancies_found = get_vacancies(language)
         average_salary, vacancies_processed = get_average_salary(vacancies)
         vacancies_stats[language]['vacancies_found'] = vacancies_found
         vacancies_stats[language]['vacancies_processed'] = vacancies_processed
@@ -26,10 +24,8 @@ def get_vacancies_stats(get_vacancies, secret_key):
 
 
 def main():
-    load_dotenv()
-    sj_secret_key = os.environ.get('SJ_SECRET_KEY')
-    hh_vacancies_stats = get_vacancies_stats(get_hh_vacancies, '')
-    sj_vacancies_stats = get_vacancies_stats(get_sj_vacancies, sj_secret_key)
+    hh_vacancies_stats = get_vacancies_stats(get_hh_vacancies)
+    sj_vacancies_stats = get_vacancies_stats(get_sj_vacancies)
     for index, stats in enumerate((hh_vacancies_stats, sj_vacancies_stats)):
         table_title = ('+HeadHunter Moscow+', '+SuperJob Moscow+')[index]
         table_values = [['Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата'],
