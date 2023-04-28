@@ -10,10 +10,17 @@ PER_PAGE = 100
 SJ_API_URL = 'https://api.superjob.ru/2.0/vacancies/'
 
 
+def get_key():
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if not os.path.exists(env_path):
+        raise FileNotFoundError('.env does not exist')
+    load_dotenv(env_path)
+    return os.environ.get('SJ_SECRET_KEY')
+
+
 def get_sj_vacancies(language):
     """Get all vacancies for a language from the SuperJob"""
-    load_dotenv()
-    secret_key = os.environ.get('SJ_SECRET_KEY')
+    secret_key = get_key()
     headers = {'X-Api-App-Id': secret_key}
     vacancies_roster = []
     params = {'catalogues': PROFESSION, 'keyword': language, 'town': TOWN,
@@ -27,5 +34,10 @@ def get_sj_vacancies(language):
     return vacancies_roster, vacancies_found
 
 
+def main():
+    language = input()
+    get_sj_vacancies(language)
+
+
 if __name__ == '__main__':
-    get_sj_vacancies()
+    main()
