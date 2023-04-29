@@ -1,6 +1,5 @@
 import os
 from itertools import count
-from dotenv import load_dotenv
 
 from get_stats_utils import get_response
 
@@ -10,18 +9,9 @@ PER_PAGE = 100
 SJ_API_URL = 'https://api.superjob.ru/2.0/vacancies/'
 
 
-def get_key():
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
-    if not os.path.exists(env_path):
-        raise FileNotFoundError('.env does not exist')
-    load_dotenv(env_path)
-    return os.environ.get('SJ_SECRET_KEY')
-
-
 def get_sj_vacancies(language):
     """Get all vacancies for a language from the SuperJob"""
-    secret_key = get_key()
-    headers = {'X-Api-App-Id': secret_key}
+    headers = {'X-Api-App-Id': os.environ.get('SJ_SECRET_KEY')}
     vacancies_roster = []
     params = {'catalogues': PROFESSION, 'keyword': language, 'town': TOWN,
               'count': PER_PAGE}

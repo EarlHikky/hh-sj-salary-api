@@ -1,5 +1,7 @@
+import os
 from collections import defaultdict
 from terminaltables import DoubleTable
+from dotenv import load_dotenv
 
 from get_stats_utils import get_average_salary
 from hh_api import get_hh_vacancies
@@ -24,6 +26,10 @@ def get_vacancies_stats(get_vacancies):
 
 
 def main():
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if not os.path.exists(env_path):
+        raise FileNotFoundError('.env does not exist')
+    load_dotenv(env_path)
     hh_vacancies_stats = get_vacancies_stats(get_hh_vacancies)
     sj_vacancies_stats = get_vacancies_stats(get_sj_vacancies)
     for index, stats in enumerate((hh_vacancies_stats, sj_vacancies_stats)):
