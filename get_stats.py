@@ -71,7 +71,7 @@ def get_response(url, headers, params):
     return vacancies, available_vacancies_check, vacancies_found
 
 
-def get_sj_vacancies(language):
+def get_sj_vacancies(language, sj_api_key):
     """Get all vacancies for a language from the SuperJob"""
     headers = {'X-Api-App-Id': sj_api_key}
     vacancies_roster = []
@@ -100,11 +100,23 @@ def get_hh_vacancies(language):
     return vacancies_roster, vacancies_found
 
 
-def get_vacancies_stats(get_vacancies):
+def get_hh_vacancies_stats():
     """Get a stats for LANGUAGES"""
     vacancies_stats = defaultdict(dict)
     for language in LANGUAGES:
-        vacancies, vacancies_found = get_vacancies(language)
+        vacancies, vacancies_found = get_hh_vacancies(language)
+        average_salary, vacancies_processed = get_average_salary(vacancies)
+        vacancies_stats[language]['vacancies_found'] = vacancies_found
+        vacancies_stats[language]['vacancies_processed'] = vacancies_processed
+        vacancies_stats[language]['average_salary'] = average_salary
+    return dict(vacancies_stats)
+
+
+def get_sj_vacancies_stats(sj_api_key):
+    """Get a stats for LANGUAGES"""
+    vacancies_stats = defaultdict(dict)
+    for language in LANGUAGES:
+        vacancies, vacancies_found = get_sj_vacancies(language, sj_api_key)
         average_salary, vacancies_processed = get_average_salary(vacancies)
         vacancies_stats[language]['vacancies_found'] = vacancies_found
         vacancies_stats[language]['vacancies_processed'] = vacancies_processed
@@ -113,8 +125,13 @@ def get_vacancies_stats(get_vacancies):
 
 
 def main():
-    hh_vacancies_stats = get_vacancies_stats(get_hh_vacancies)
-    sj_vacancies_stats = get_vacancies_stats(get_sj_vacancies)
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if not os.path.exists(env_path):
+        raise FileNotFoundError('.env does not exist')
+    load_dotenv(env_path)
+    sj_api_key = os.environ.get('SJ_SECRET_KEY')
+    hh_vacancies_stats = get_hh_vacancies_stats()
+    sj_vacancies_stats = get_sj_vacancies_stats(sj_api_key)
     for index, stats in enumerate((hh_vacancies_stats, sj_vacancies_stats)):
         table_title = ('+HeadHunter Moscow+', '+SuperJob Moscow+')[index]
         table_values = [['Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата'],
@@ -125,9 +142,4 @@ def main():
 
 
 if __name__ == '__main__':
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
-    if not os.path.exists(env_path):
-        raise FileNotFoundError('.env does not exist')
-    load_dotenv(env_path)
-    sj_api_key = os.environ.get('SJ_SECRET_KEY')
     main()
